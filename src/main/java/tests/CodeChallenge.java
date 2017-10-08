@@ -9,10 +9,11 @@ public class CodeChallenge extends TestBase {
     @Test
     public void test() throws Exception {
         AssessmentPage assessmentPage = new AssessmentPage(driver);
+
         assessmentPage.acceptAgreement();
         assessmentPage.continueAssessment();
         assessmentPage.enterPersonalInfo("Bill", "40", "male");
-        assessmentPage.selectEthnicity();
+        assessmentPage.selectEthnicity("Caucasian");
         assessmentPage.enterLocation("Orem, UT");
         assessmentPage.slideDial(10);
         assessmentPage.slideDial(25);

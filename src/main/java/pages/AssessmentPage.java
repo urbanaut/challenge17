@@ -50,8 +50,56 @@ public class AssessmentPage {
 
 
     // Ethnicity
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[1]")
+    public WebElement africanAmericanBtn;
+
     @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[2]")
     public WebElement caucasianBtn;
+
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[3]")
+    public WebElement chineseBtn;
+
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[4]")
+    public WebElement filipinoBtn;
+
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[5]")
+    public WebElement hispanicBtn;
+
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[6]")
+    public WebElement indianBtn;
+
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[7]")
+    public WebElement japaneseBtn;
+
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[8]")
+    public WebElement javenseBtn;
+
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[9]")
+    public WebElement koreanBtn;
+
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[10]")
+    public WebElement malaysianBtn;
+
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[11]")
+    public WebElement mediterraneanBtn;
+
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[12]")
+    public WebElement middleEasternBtn;
+
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[13]")
+    public WebElement nativeAmericanBtn;
+
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[14]")
+    public WebElement southPacificIslanderBtn;
+
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[15]")
+    public WebElement thaiBtn;
+
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[16]")
+    public WebElement vietnameseBtn;
+
+    @FindBy(xpath = "//*[@id=\"ethnicity-window\"]/ul/li[17]")
+    public WebElement otherBtn;
 
 
     // Location
@@ -191,9 +239,64 @@ public class AssessmentPage {
         nextBtn.click();
     }
 
-    public void selectEthnicity() throws Exception {
+    public void selectEthnicity(String ethnicity) throws Exception {
         waitForElementToBeReady(caucasianBtn);
-        caucasianBtn.click();
+        switch (ethnicity) {
+            case "African American":
+                africanAmericanBtn.click();
+                break;
+            case "Caucasian":
+                caucasianBtn.click();
+                break;
+            case "Chinese":
+                chineseBtn.click();
+                break;
+            case "Filipino":
+                filipinoBtn.click();
+                break;
+            case "Hispanic":
+                hispanicBtn.click();
+                break;
+            case "Indian":
+                indianBtn.click();
+                break;
+            case "Japanese":
+                japaneseBtn.click();
+                break;
+            case "Javenese":
+                javenseBtn.click();
+                break;
+            case "Korean":
+                koreanBtn.click();
+                break;
+            case "Malaysian":
+                malaysianBtn.click();
+                break;
+            case "Mediterranean":
+                mediterraneanBtn.click();
+                break;
+            case "Middle Eastern":
+                middleEasternBtn.click();
+                break;
+            case "Native American":
+                nativeAmericanBtn.click();
+                break;
+            case "South Pacific Islander":
+                southPacificIslanderBtn.click();
+                break;
+            case "Thai":
+                thaiBtn.click();
+                break;
+            case "Vietnamese":
+                vietnameseBtn.click();
+                break;
+            case "Other":
+                otherBtn.click();
+                break;
+            default:
+                otherBtn.click();
+                break;
+        }
         nextBtn.click();
     }
 
