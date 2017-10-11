@@ -1,10 +1,12 @@
 package pages;
 
-import javafx.beans.binding.StringBinding;
+import org.omg.PortableServer.THREAD_POLICY_ID;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.touch.TouchActions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
@@ -206,9 +208,19 @@ public class AssessmentPage {
     @FindBy(xpath = "//button[text()='Change']")
     public WebElement sunProtectionChangeBtn;
 
+
+    // Night Moisturizer Modal
+    @FindBy(xpath = "//*[@id=\"nuskinBespokeApp\"]//button[text()='Yes']")
+    public WebElement nightMoisturizerYesBtn;
+
+    @FindBy(xpath = "//*[@id=\"nuskinBespokeApp\"]//button[text()='No']")
+    public WebElement nightMoisturizerNoBtn;
+
+
     // Review
     @FindBy(xpath = "//button[@translate='review-find-my-regimen']")
     public WebElement findCustomizedRegimenBtn;
+
 
     public void acceptAgreement() {
         agreementBtn.click();
@@ -216,10 +228,8 @@ public class AssessmentPage {
     }
 
     public void continueAssessment() throws Exception {
-        Actions actions = new Actions(driver);
-        actions.sendKeys(Keys.PAGE_DOWN).perform();
         Thread.sleep(1000);
-        actions.moveToElement(continueBtn).click().perform();
+        scrollToAndClickElement(continueBtn);
     }
 
     public void enterPersonalInfo(String name, String age, String sex) {
@@ -236,7 +246,7 @@ public class AssessmentPage {
                 maleBtn.click();
                 break;
         }
-        nextBtn.click();
+        scrollToAndClickElement(nextBtn);
     }
 
     public void selectEthnicity(String ethnicity) throws Exception {
@@ -297,7 +307,7 @@ public class AssessmentPage {
                 otherBtn.click();
                 break;
         }
-        nextBtn.click();
+        scrollToAndClickElement(nextBtn);
     }
 
     public void enterLocation(String location) throws Exception {
@@ -310,15 +320,28 @@ public class AssessmentPage {
         locationTxb.sendKeys(location);
         Thread.sleep(500);
         actions.sendKeys(Keys.DOWN, Keys.ENTER).perform();
-        nextBtn.click();
+        scrollToAndClickElement(nextBtn);
     }
 
     public void slideDial(int percent) throws Exception {
         Actions actions = new Actions(driver);
         waitForElementToBeReady(sliderCtrl);
-        double distance = (percent / 100.0) * 300.0;
-        actions.moveToElement(sliderCtrl,75,375).clickAndHold().moveByOffset((int)distance, 0).release().perform();
-        nextBtn.click();
+
+        int width = sliderCtrl.getSize().getWidth();
+        int height = sliderCtrl.getSize().getHeight();
+        double xOffset = 0.20 * width;      // Set xOffset at 20% of the width of the canvas image
+        double yOffset = 0.80 * (height);   // Set yOffset at 80% of the height of the canvas image
+        double distance = (percent / 100.0) * (width - (2 * xOffset));
+
+        System.out.println("Width: " + width + ", Height: " + height + ", xOff: " + xOffset + ", yOff: " + yOffset + ", Distance: " + distance);
+
+        actions.moveToElement(sliderCtrl, (int)xOffset, (int)yOffset)
+                .clickAndHold()
+                .moveByOffset((int)distance, 0)
+                .release()
+                .perform();
+
+        scrollToAndClickElement(nextBtn);
     }
 
     public void selectSkinType(String skinType) throws Exception {
@@ -340,7 +363,7 @@ public class AssessmentPage {
                 dryBtn.click();
                 break;
         }
-        nextBtn.click();
+        scrollToAndClickElement(nextBtn);
     }
 
     public void selectAHAExposure(String exposure) throws Exception {
@@ -362,7 +385,7 @@ public class AssessmentPage {
                 discontinuedBtn.click();
                 break;
         }
-        nextBtn.click();
+        scrollToAndClickElement(nextBtn);
     }
 
     public void selectSkinFirmness(String firmness) throws Exception {
@@ -384,7 +407,7 @@ public class AssessmentPage {
                 firmBtn.click();
                 break;
         }
-        nextBtn.click();
+        scrollToAndClickElement(nextBtn);
     }
 
     public void selectSkinRadiance(String radiance) throws Exception {
@@ -406,7 +429,7 @@ public class AssessmentPage {
                 radiantBtn.click();
                 break;
         }
-        nextBtn.click();
+        scrollToAndClickElement(nextBtn);
     }
 
     public void selectSkinTexture(String texture) throws Exception {
@@ -428,7 +451,7 @@ public class AssessmentPage {
                 smoothBtn.click();
                 break;
         }
-        nextBtn.click();
+        scrollToAndClickElement(nextBtn);
     }
 
     public void selectAddMoisturizer(String choice) throws Exception {
@@ -444,7 +467,7 @@ public class AssessmentPage {
                 yesMoisturizerBtn.click();
                 break;
         }
-        nextBtn.click();
+        scrollToAndClickElement(nextBtn);
     }
 
     public void selectModalOption(String choice) throws Exception {
@@ -461,26 +484,11 @@ public class AssessmentPage {
         }
     }
 
-    public void selectAddNightMoisturizer(String choice) throws Exception {
-        waitForElementToBeReady(yesMoisturizerBtn);
-        switch (choice) {
-            case "yes":
-                yesMoisturizerBtn.click();
-                break;
-            case "no":
-                noMoisturizerBtn.click();
-                break;
-            default:
-                yesMoisturizerBtn.click();
-                break;
-        }
-        nextBtn.click();
-    }
-
     public void findCustomizedRegimen() throws Exception {
         waitForElementToBeReady(findCustomizedRegimenBtn);
         findCustomizedRegimenBtn.click();
     }
+
 
     // Utilities
     private void waitForElementToBeReady(WebElement element) throws Exception {
@@ -488,4 +496,17 @@ public class AssessmentPage {
             Thread.sleep(1000);
         }while (!element.isDisplayed());
     }
+
+    private void scrollToAndClickElement(WebElement element) {
+        try {
+            JavascriptExecutor jse = (JavascriptExecutor)driver;
+            jse.executeScript("window.scrollTo(0," + (element.getLocation().y - 50)+ ")");
+            element.click();
+            jse.executeScript("window.scrollTo(0,0)");
+        } catch (Exception e) {
+            System.out.println("Unable to locate element.");
+            e.printStackTrace();
+        }
+    }
+
 }

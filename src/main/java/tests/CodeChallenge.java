@@ -15,6 +15,7 @@ public class CodeChallenge extends TestBase {
         assessmentPage.enterPersonalInfo("Bill", "40", "male");
         assessmentPage.selectEthnicity("Caucasian");
         assessmentPage.enterLocation("Orem, UT");
+        Thread.sleep(2000);
         assessmentPage.slideDial(10);
         assessmentPage.slideDial(25);
         assessmentPage.continueAssessment();
@@ -33,8 +34,8 @@ public class CodeChallenge extends TestBase {
         assessmentPage.selectAddMoisturizer("yes");
         assessmentPage.slideDial(-20);
         assessmentPage.selectModalOption("continue");
-        assessmentPage.selectAddNightMoisturizer("yes");
+        assessmentPage.selectAddMoisturizer("yes");
         assessmentPage.slideDial(10);
-        assessmentPage.selectModalOption("no");
+
     }
 }
