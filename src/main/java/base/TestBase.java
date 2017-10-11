@@ -46,12 +46,17 @@ public class TestBase {
             driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 
-        if (language.equals("English"))
-            driver.navigate().to("https://www.nuskin.com/content/nuskin/en_US/ageloc-me-assessment.html#/you-start");
-        else if (language.equals("French"))
-            driver.navigate().to("https://www.nuskin.com/content/nuskin/fr_BE/ageloc-me-assessment.html#/you-start");
-        else if (language.equals("Dutch"))
-            driver.navigate().to("https://www.nuskin.com/content/nuskin/nl_BE/ageloc-me-assessment.html#/you-start");
+        switch (language) {
+            case "English":
+                driver.navigate().to("https://www.nuskin.com/content/nuskin/en_US/ageloc-me-assessment.html#/you-start");
+                break;
+            case "French":
+                driver.navigate().to("https://www.nuskin.com/content/nuskin/fr_BE/ageloc-me-assessment.html#/you-start");
+                break;
+            case "Dutch":
+                driver.navigate().to("https://www.nuskin.com/content/nuskin/nl_BE/ageloc-me-assessment.html#/you-start");
+                break;
+        }
     }
 }
 
