@@ -8,7 +8,7 @@ public class CodeChallenge extends TestBase {
 
     @Test
     public void test() throws Exception {
-        AssessmentPage assessmentPage = new AssessmentPage(driver);
+        AssessmentPage assessmentPage = new AssessmentPage(driver, mobileTest);
 
         assessmentPage.acceptAgreement();
         assessmentPage.continueAssessment();
@@ -31,11 +31,9 @@ public class CodeChallenge extends TestBase {
         assessmentPage.selectSkinRadiance("dull");
         assessmentPage.selectSkinTexture("smooth");
         assessmentPage.continueAssessment();
-        assessmentPage.selectAddMoisturizer("yes");
-        assessmentPage.slideDial(-20);
-        assessmentPage.selectModalOption("continue");
-        assessmentPage.selectAddMoisturizer("yes");
-        assessmentPage.slideDial(10);
-
+        assessmentPage.selectAddChoice("yes");
+        assessmentPage.slideDayMoisturizerDial(25);
+        assessmentPage.selectAddChoice("yes");
+        assessmentPage.slideNightMoisturizerDial(-50);
     }
 }

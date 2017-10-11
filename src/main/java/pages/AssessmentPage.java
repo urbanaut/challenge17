@@ -1,21 +1,20 @@
 package pages;
 
-import org.omg.PortableServer.THREAD_POLICY_ID;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.interactions.touch.TouchActions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+
+import java.util.concurrent.TimeUnit;
 
 public class AssessmentPage {
 
     private WebDriver driver;
-    public AssessmentPage(WebDriver driver) {
+    private boolean mobileTest;
+    public AssessmentPage(WebDriver driver, boolean mobileTest) {
         PageFactory.initElements(driver, this);
         this.driver = driver;
+        this.mobileTest = mobileTest;
     }
 
     // Navigation Buttons
@@ -209,6 +208,14 @@ public class AssessmentPage {
     public WebElement sunProtectionChangeBtn;
 
 
+    // Lighter Moisturizer Modal
+    @FindBy(xpath = "//button[text()='Yes']")
+    public WebElement lighterMoisturizerYesBtn;
+
+    @FindBy(xpath = "//button[text()='No']")
+    public WebElement lighterMoisturizerNoBtn;
+
+
     // Night Moisturizer Modal
     @FindBy(xpath = "//*[@id=\"nuskinBespokeApp\"]//button[text()='Yes']")
     public WebElement nightMoisturizerYesBtn;
@@ -331,17 +338,101 @@ public class AssessmentPage {
         int height = sliderCtrl.getSize().getHeight();
         double xOffset = 0.20 * width;      // Set xOffset at 20% of the width of the canvas image
         double yOffset = 0.80 * (height);   // Set yOffset at 80% of the height of the canvas image
-        double distance = (percent / 100.0) * (width - (2 * xOffset));
+        double percentage = percent / 100.0;
+        double distance = percentage * (width - (2 * xOffset));
 
-        System.out.println("Width: " + width + ", Height: " + height + ", xOff: " + xOffset + ", yOff: " + yOffset + ", Distance: " + distance);
+//        System.out.println("Width: " + width + ", Height: " + height + ", xOff: " + xOffset + ", yOff: " + yOffset + ", Distance: " + distance);
 
-        actions.moveToElement(sliderCtrl, (int)xOffset, (int)yOffset)
-                .clickAndHold()
-                .moveByOffset((int)distance, 0)
-                .release()
-                .perform();
+        if (!mobileTest) {
+            actions.moveToElement(sliderCtrl, (int) xOffset, (int) yOffset)
+                    .clickAndHold()
+                    .moveByOffset((int) distance, 0)
+                    .release()
+                    .perform();
+        } else {
+            xOffset = xOffset + distance;
+            actions.moveToElement(sliderCtrl, (int) xOffset, (int) yOffset).click().perform();
+        }
+        scrollToAndClickElement(nextBtn);
+    }
+
+    public void slideDayMoisturizerDial(int percent) throws Exception {
+        Actions actions = new Actions(driver);
+        waitForElementToBeReady(sliderCtrl);
+
+        int width = sliderCtrl.getSize().getWidth();
+        int height = sliderCtrl.getSize().getHeight();
+        double xOffset = 0.50 * width;      // Set xOffset at 50% of the width of the canvas image
+        double yOffset = 0.80 * (height);   // Set yOffset at 80% of the height of the canvas image
+        double percentage = percent / 100.0;
+        double distance = percentage * ((width / 2) - (width * 0.2));
+
+        if (!mobileTest) {
+            actions.moveToElement(sliderCtrl, (int) xOffset, (int) yOffset)
+                    .clickAndHold()
+                    .moveByOffset((int) distance, 0)
+                    .release()
+                    .perform();
+        } else {
+            xOffset = xOffset + distance;
+            actions.moveToElement(sliderCtrl, (int) xOffset, (int) yOffset).click().perform();
+        }
 
         scrollToAndClickElement(nextBtn);
+
+        try {
+            driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+            if (sunProtectionContinueBtn.isDisplayed()) {
+                selectContinueModalOption("continue");
+            } else if (lighterMoisturizerYesBtn.isDisplayed()) {
+                selectMoisturizerModalOption("yes");
+            }
+        }catch (Exception e) {
+            System.out.println("No modal alert, proceeding to next section.");
+        }
+    }
+
+    public void slideNightMoisturizerDial(int percent) throws Exception {
+        Actions actions = new Actions(driver);
+        waitForElementToBeReady(sliderCtrl);
+
+        int width = sliderCtrl.getSize().getWidth();
+        int height = sliderCtrl.getSize().getHeight();
+        double xOffset = 0.60 * width;      // Set xOffset at 50% of the width of the canvas image
+        double yOffset = 0.80 * (height);   // Set yOffset at 80% of the height of the canvas image
+        double percentage = percent / 100.0;
+        double distance;
+
+        // Knob starts at 60% of canvas, distance must be between that
+        // and the end of the dial, which is 20% from the edge of the canvas,
+        // which distance is canvas length minus 80% of the total length
+        if (percent > 0) {
+            distance = percentage * (width - (width * 0.80));
+        } else {
+            distance = percentage * ((width / 2)  - (width * 0.10));
+        }
+
+        if (!mobileTest) {
+            actions.moveToElement(sliderCtrl, (int) xOffset, (int) yOffset)
+                    .clickAndHold()
+                    .moveByOffset((int) distance, 0)
+                    .release()
+                    .perform();
+        } else {
+            xOffset = xOffset + distance;
+            actions.moveToElement(sliderCtrl, (int) xOffset, (int) yOffset).click().perform();
+        }
+
+        scrollToAndClickElement(nextBtn);
+
+        try {
+            driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+            if (lighterMoisturizerYesBtn.isDisplayed()) {
+                selectMoisturizerModalOption("yes");
+            }
+        }catch (Exception e) {
+            System.out.println("No modal alert, proceeding to next section.");
+        }
     }
 
     public void selectSkinType(String skinType) throws Exception {
@@ -454,7 +545,7 @@ public class AssessmentPage {
         scrollToAndClickElement(nextBtn);
     }
 
-    public void selectAddMoisturizer(String choice) throws Exception {
+    public void selectAddChoice(String choice) throws Exception {
         waitForElementToBeReady(yesMoisturizerBtn);
         switch (choice) {
             case "yes":
@@ -470,17 +561,35 @@ public class AssessmentPage {
         scrollToAndClickElement(nextBtn);
     }
 
-    public void selectModalOption(String choice) throws Exception {
-        switch (choice) {
-            case "continue":
-                sunProtectionContinueBtn.click();
-                break;
-            case "change":
-                sunProtectionChangeBtn.click();
-                break;
-            default:
-                sunProtectionContinueBtn.click();
-                break;
+    private void selectContinueModalOption(String choice) {
+        if (sunProtectionContinueBtn.isDisplayed()) {
+            switch (choice) {
+                case "continue":
+                    sunProtectionContinueBtn.click();
+                    break;
+                case "change":
+                    sunProtectionChangeBtn.click();
+                    break;
+                default:
+                    sunProtectionContinueBtn.click();
+                    break;
+            }
+        }
+    }
+
+    private void selectMoisturizerModalOption(String choice) {
+        if (lighterMoisturizerYesBtn.isDisplayed()) {
+            switch (choice) {
+                case "yes":
+                    lighterMoisturizerYesBtn.click();
+                    break;
+                case "no":
+                    lighterMoisturizerNoBtn.click();
+                    break;
+                default:
+                    lighterMoisturizerYesBtn.click();
+                    break;
+            }
         }
     }
 
@@ -499,10 +608,11 @@ public class AssessmentPage {
 
     private void scrollToAndClickElement(WebElement element) {
         try {
-            JavascriptExecutor jse = (JavascriptExecutor)driver;
-            jse.executeScript("window.scrollTo(0," + (element.getLocation().y - 50)+ ")");
+            JavascriptExecutor jse = (JavascriptExecutor) driver;
+            jse.executeScript("window.scrollTo(0," + (element.getLocation().y - 50) + ")");
             element.click();
-            jse.executeScript("window.scrollTo(0,0)");
+            if (mobileTest)
+                jse.executeScript("window.scrollTo(0,0)");
         } catch (Exception e) {
             System.out.println("Unable to locate element.");
             e.printStackTrace();

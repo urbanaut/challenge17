@@ -15,6 +15,7 @@ public class TestBase {
 
     public static WebDriver driver;
     private static String chromeDriverPath = "src\\main\\resources\\drivers\\chromedriver.exe";
+    public boolean mobileTest = false;
 
     @BeforeTest
     public void init() {
@@ -39,8 +40,10 @@ public class TestBase {
         DesiredCapabilities capabilities = DesiredCapabilities.chrome();
         capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
 
-//        driver = new ChromeDriver(options);
-        driver = new ChromeDriver(capabilities);
+        if (mobileTest)
+            driver = new ChromeDriver(capabilities);
+        else
+            driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         driver.navigate().to("https://www.nuskin.com/content/nuskin/en_US/ageloc-me-assessment.html#/you-start");
     }
