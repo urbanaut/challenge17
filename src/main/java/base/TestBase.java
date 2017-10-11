@@ -1,6 +1,5 @@
 package base;
 
-import org.junit.Before;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -16,6 +15,7 @@ public class TestBase {
     public static WebDriver driver;
     private static String chromeDriverPath = "src\\main\\resources\\drivers\\chromedriver.exe";
     public boolean mobileTest = false;
+    private String language = "Dutch";
 
     @BeforeTest
     public void init() {
@@ -45,7 +45,13 @@ public class TestBase {
         else
             driver = new ChromeDriver(options);
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-        driver.navigate().to("https://www.nuskin.com/content/nuskin/en_US/ageloc-me-assessment.html#/you-start");
+
+        if (language.equals("English"))
+            driver.navigate().to("https://www.nuskin.com/content/nuskin/en_US/ageloc-me-assessment.html#/you-start");
+        else if (language.equals("French"))
+            driver.navigate().to("https://www.nuskin.com/content/nuskin/fr_BE/ageloc-me-assessment.html#/you-start");
+        else if (language.equals("Dutch"))
+            driver.navigate().to("https://www.nuskin.com/content/nuskin/nl_BE/ageloc-me-assessment.html#/you-start");
     }
 }
 

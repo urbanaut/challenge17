@@ -13,9 +13,8 @@ public class CodeChallenge extends TestBase {
         assessmentPage.acceptAgreement();
         assessmentPage.continueAssessment();
         assessmentPage.enterPersonalInfo("Bill", "40", "male");
-        assessmentPage.selectEthnicity("Caucasian");
+        assessmentPage.selectEthnicity("Other");
         assessmentPage.enterLocation("Orem, UT");
-        Thread.sleep(2000);
         assessmentPage.slideDial(10);
         assessmentPage.slideDial(25);
         assessmentPage.continueAssessment();
@@ -32,7 +31,7 @@ public class CodeChallenge extends TestBase {
         assessmentPage.selectSkinTexture("smooth");
         assessmentPage.continueAssessment();
         assessmentPage.selectAddChoice("yes");
-        assessmentPage.slideDayMoisturizerDial(25);
+        assessmentPage.slideDayMoisturizerDial(60);
         assessmentPage.selectAddChoice("yes");
         assessmentPage.slideNightMoisturizerDial(-50);
     }

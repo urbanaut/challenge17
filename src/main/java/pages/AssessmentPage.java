@@ -28,6 +28,9 @@ public class AssessmentPage {
     public WebElement continueBtn;
 
 
+    // Language
+
+
     // Agreement
     @FindBy(xpath = "//*[@id=\"page-wrap-you\"]/div[3]/div/div/div[2]/p/label")
     public WebElement agreementBtn;
@@ -107,7 +110,7 @@ public class AssessmentPage {
     @FindBy(xpath = "//*[@id=\"locationText\"]")
     public WebElement locationTxb;
 
-    @FindBy(xpath = "//div/h2[contains(text(),'We have determined you live in')]")
+    @FindBy(xpath = "//div/h2[@ng-bind-html='subtitleText()']")
     public WebElement autoFindTxt;
 
     @FindBy(xpath = "//*[@id=\"map\"]")
@@ -201,27 +204,19 @@ public class AssessmentPage {
 
 
     // Sun Protection Modal
-    @FindBy(xpath = "//button[text()='Continue']")
+    @FindBy(xpath = "//button[contains(@class,'change')]")
     public WebElement sunProtectionContinueBtn;
 
-    @FindBy(xpath = "//button[text()='Change']")
+    @FindBy(xpath = "//button[contains(@class,'confirm')]")
     public WebElement sunProtectionChangeBtn;
 
 
     // Lighter Moisturizer Modal
-    @FindBy(xpath = "//button[text()='Yes']")
-    public WebElement lighterMoisturizerYesBtn;
+    @FindBy(xpath = "//button[contains(@class,'change')]")
+    public WebElement noModalBtn;
 
-    @FindBy(xpath = "//button[text()='No']")
-    public WebElement lighterMoisturizerNoBtn;
-
-
-    // Night Moisturizer Modal
-    @FindBy(xpath = "//*[@id=\"nuskinBespokeApp\"]//button[text()='Yes']")
-    public WebElement nightMoisturizerYesBtn;
-
-    @FindBy(xpath = "//*[@id=\"nuskinBespokeApp\"]//button[text()='No']")
-    public WebElement nightMoisturizerNoBtn;
+    @FindBy(xpath = "//button[contains(@class,'confirm')]")
+    public WebElement yesModalBtn;
 
 
     // Review
@@ -235,7 +230,7 @@ public class AssessmentPage {
     }
 
     public void continueAssessment() throws Exception {
-        Thread.sleep(1000);
+        waitForElementToBeReady(continueBtn);
         scrollToAndClickElement(continueBtn);
     }
 
@@ -341,7 +336,7 @@ public class AssessmentPage {
         double percentage = percent / 100.0;
         double distance = percentage * (width - (2 * xOffset));
 
-//        System.out.println("Width: " + width + ", Height: " + height + ", xOff: " + xOffset + ", yOff: " + yOffset + ", Distance: " + distance);
+        //System.out.println("Width: " + width + ", Height: " + height + ", xOff: " + xOffset + ", yOff: " + yOffset + ", Distance: " + distance);
 
         if (!mobileTest) {
             actions.moveToElement(sliderCtrl, (int) xOffset, (int) yOffset)
@@ -381,12 +376,17 @@ public class AssessmentPage {
         scrollToAndClickElement(nextBtn);
 
         try {
-            driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-            if (sunProtectionContinueBtn.isDisplayed()) {
+            driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+            if (sunProtectionContinueBtn.isDisplayed())
                 selectContinueModalOption("continue");
-            } else if (lighterMoisturizerYesBtn.isDisplayed()) {
-                selectMoisturizerModalOption("yes");
-            }
+
+        }catch (Exception e) {
+            System.out.println("No modal alert, proceeding to next section.");
+        }
+        try {
+            driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+            if (yesModalBtn.isDisplayed())
+                selectYesNoModalOption("yes");
         }catch (Exception e) {
             System.out.println("No modal alert, proceeding to next section.");
         }
@@ -426,9 +426,9 @@ public class AssessmentPage {
         scrollToAndClickElement(nextBtn);
 
         try {
-            driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
-            if (lighterMoisturizerYesBtn.isDisplayed()) {
-                selectMoisturizerModalOption("yes");
+            driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+            if (yesModalBtn.isDisplayed()) {
+                selectYesNoModalOption("yes");
             }
         }catch (Exception e) {
             System.out.println("No modal alert, proceeding to next section.");
@@ -577,17 +577,17 @@ public class AssessmentPage {
         }
     }
 
-    private void selectMoisturizerModalOption(String choice) {
-        if (lighterMoisturizerYesBtn.isDisplayed()) {
+    private void selectYesNoModalOption(String choice) {
+        if (yesModalBtn.isDisplayed()) {
             switch (choice) {
                 case "yes":
-                    lighterMoisturizerYesBtn.click();
+                    yesModalBtn.click();
                     break;
                 case "no":
-                    lighterMoisturizerNoBtn.click();
+                    noModalBtn.click();
                     break;
                 default:
-                    lighterMoisturizerYesBtn.click();
+                    yesModalBtn.click();
                     break;
             }
         }
