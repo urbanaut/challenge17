@@ -4,8 +4,12 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class AssessmentPage {
 
@@ -28,15 +32,15 @@ public class AssessmentPage {
     public WebElement continueBtn;
 
 
-    // Language
-
-
     // Agreement
     @FindBy(xpath = "//*[@id=\"page-wrap-you\"]/div[3]/div/div/div[2]/p/label")
     public WebElement agreementBtn;
 
     @FindBy(xpath = "//*[@id=\"page-wrap-you\"]/div[3]/div/div/div[2]/button")
     public WebElement agreementContinueBtn;
+
+    @FindBy(xpath = "//div[@id='header']//a[@id='agreeToCookies']")
+    public WebElement cookieBtn;
 
 
     // Personal Info
@@ -224,14 +228,23 @@ public class AssessmentPage {
     public WebElement findCustomizedRegimenBtn;
 
 
-    public void acceptAgreement() {
+    public void acceptAgreement() throws Exception {
+        if (mobileTest) {
+            try {
+                driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+                if (cookieBtn.isDisplayed())
+                    cookieBtn.click();
+            } catch (Exception e) {
+                System.out.println("No Cookie Use button found, continuing.");
+            }
+        }
         agreementBtn.click();
-        agreementContinueBtn.click();
+        scrollToAndClickElement(agreementContinueBtn, 50);
     }
 
     public void continueAssessment() throws Exception {
         waitForElementToBeReady(continueBtn);
-        scrollToAndClickElement(continueBtn);
+        scrollToAndClickElement(continueBtn, 50);
     }
 
     public void enterPersonalInfo(String name, String age, String sex) {
@@ -248,7 +261,7 @@ public class AssessmentPage {
                 maleBtn.click();
                 break;
         }
-        scrollToAndClickElement(nextBtn);
+        scrollToAndClickElement(nextBtn, 50);
     }
 
     public void selectEthnicity(String ethnicity) throws Exception {
@@ -303,13 +316,13 @@ public class AssessmentPage {
                 vietnameseBtn.click();
                 break;
             case "Other":
-                otherBtn.click();
+                scrollToAndClickElement(otherBtn, 100);
                 break;
             default:
-                otherBtn.click();
+                scrollToAndClickElement(otherBtn, 100);
                 break;
         }
-        scrollToAndClickElement(nextBtn);
+        scrollToAndClickElement(nextBtn, 50);
     }
 
     public void enterLocation(String location) throws Exception {
@@ -322,7 +335,7 @@ public class AssessmentPage {
         locationTxb.sendKeys(location);
         Thread.sleep(500);
         actions.sendKeys(Keys.DOWN, Keys.ENTER).perform();
-        scrollToAndClickElement(nextBtn);
+        scrollToAndClickElement(nextBtn, 50);
     }
 
     public void slideDial(int percent) throws Exception {
@@ -348,7 +361,7 @@ public class AssessmentPage {
             xOffset = xOffset + distance;
             actions.moveToElement(sliderCtrl, (int) xOffset, (int) yOffset).click().perform();
         }
-        scrollToAndClickElement(nextBtn);
+        scrollToAndClickElement(nextBtn, 50);
     }
 
     public void slideDayMoisturizerDial(int percent) throws Exception {
@@ -373,7 +386,7 @@ public class AssessmentPage {
             actions.moveToElement(sliderCtrl, (int) xOffset, (int) yOffset).click().perform();
         }
 
-        scrollToAndClickElement(nextBtn);
+        scrollToAndClickElement(nextBtn, 50);
 
         try {
             driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
@@ -383,6 +396,7 @@ public class AssessmentPage {
         }catch (Exception e) {
             System.out.println("No modal alert, proceeding to next section.");
         }
+
         try {
             driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
             if (yesModalBtn.isDisplayed())
@@ -423,7 +437,7 @@ public class AssessmentPage {
             actions.moveToElement(sliderCtrl, (int) xOffset, (int) yOffset).click().perform();
         }
 
-        scrollToAndClickElement(nextBtn);
+        scrollToAndClickElement(nextBtn, 50);
 
         try {
             driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
@@ -454,7 +468,7 @@ public class AssessmentPage {
                 dryBtn.click();
                 break;
         }
-        scrollToAndClickElement(nextBtn);
+        scrollToAndClickElement(nextBtn, 50);
     }
 
     public void selectAHAExposure(String exposure) throws Exception {
@@ -476,7 +490,7 @@ public class AssessmentPage {
                 discontinuedBtn.click();
                 break;
         }
-        scrollToAndClickElement(nextBtn);
+        scrollToAndClickElement(nextBtn, 50);
     }
 
     public void selectSkinFirmness(String firmness) throws Exception {
@@ -498,7 +512,7 @@ public class AssessmentPage {
                 firmBtn.click();
                 break;
         }
-        scrollToAndClickElement(nextBtn);
+        scrollToAndClickElement(nextBtn, 50);
     }
 
     public void selectSkinRadiance(String radiance) throws Exception {
@@ -520,7 +534,7 @@ public class AssessmentPage {
                 radiantBtn.click();
                 break;
         }
-        scrollToAndClickElement(nextBtn);
+        scrollToAndClickElement(nextBtn, 50);
     }
 
     public void selectSkinTexture(String texture) throws Exception {
@@ -542,7 +556,7 @@ public class AssessmentPage {
                 smoothBtn.click();
                 break;
         }
-        scrollToAndClickElement(nextBtn);
+        scrollToAndClickElement(nextBtn, 50);
     }
 
     public void selectAddChoice(String choice) throws Exception {
@@ -558,7 +572,7 @@ public class AssessmentPage {
                 yesMoisturizerBtn.click();
                 break;
         }
-        scrollToAndClickElement(nextBtn);
+        scrollToAndClickElement(nextBtn, 75);
     }
 
     private void selectContinueModalOption(String choice) {
@@ -580,11 +594,11 @@ public class AssessmentPage {
     private void selectYesNoModalOption(String choice) {
         if (yesModalBtn.isDisplayed()) {
             switch (choice) {
-                case "yes":
-                    yesModalBtn.click();
-                    break;
                 case "no":
                     noModalBtn.click();
+                    break;
+                case "yes":
+                    yesModalBtn.click();
                     break;
                 default:
                     yesModalBtn.click();
@@ -606,10 +620,11 @@ public class AssessmentPage {
         }while (!element.isDisplayed());
     }
 
-    private void scrollToAndClickElement(WebElement element) {
+    private void scrollToAndClickElement(WebElement element, int offset) {
         try {
             JavascriptExecutor jse = (JavascriptExecutor) driver;
-            jse.executeScript("window.scrollTo(0," + (element.getLocation().y - 50) + ")");
+            jse.executeScript("window.scrollTo(0," + element.getLocation().getY() + ")");
+            jse.executeScript("window.scrollBy(0,-" + offset + ")");
             element.click();
             if (mobileTest)
                 jse.executeScript("window.scrollTo(0,0)");

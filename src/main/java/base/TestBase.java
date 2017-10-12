@@ -12,10 +12,10 @@ import java.util.concurrent.TimeUnit;
 
 public class TestBase {
 
-    public static WebDriver driver;
+    protected static WebDriver driver;
     private static String chromeDriverPath = "src\\main\\resources\\drivers\\chromedriver.exe";
     public boolean mobileTest = false;
-    private String language = "Dutch";
+    private String language = "English";
 
     @BeforeTest
     public void init() {
@@ -33,12 +33,13 @@ public class TestBase {
 
         String deviceName = "Samsung Galaxy S4";
 //        String deviceName = "Apple iPad";
-        Map<String, String> mobileEmulation =  new HashMap<>();
-        mobileEmulation.put("deviceName", deviceName);
-        Map<String, Object> chromeOptions = new HashMap<>();
-        chromeOptions.put("mobileEmulation", mobileEmulation);
+        Map<String, String> devices =  new HashMap<>();
+        devices.put("deviceName", deviceName);
+        Map<String, Object> mobileEmulation = new HashMap<>();
+        mobileEmulation.put("mobileEmulation", devices);
         DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-        capabilities.setCapability(ChromeOptions.CAPABILITY, chromeOptions);
+        capabilities.setCapability(ChromeOptions.CAPABILITY, mobileEmulation);
+//        capabilities.setCapability(ChromeOptions.CAPABILITY, options);
 
         if (mobileTest)
             driver = new ChromeDriver(capabilities);

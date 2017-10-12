@@ -30,9 +30,10 @@ public class CodeChallenge extends TestBase {
         assessmentPage.selectSkinRadiance("dull");
         assessmentPage.selectSkinTexture("smooth");
         assessmentPage.continueAssessment();
-        assessmentPage.selectAddChoice("yes");
+        assessmentPage.selectAddChoice("no");
         assessmentPage.slideDayMoisturizerDial(60);
         assessmentPage.selectAddChoice("yes");
         assessmentPage.slideNightMoisturizerDial(-50);
+        assessmentPage.findCustomizedRegimen();
     }
 }
